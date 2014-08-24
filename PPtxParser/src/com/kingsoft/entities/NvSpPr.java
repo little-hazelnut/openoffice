@@ -12,7 +12,16 @@ public class NvSpPr {// Non-Visual Properties for a Shape
 	// cNvSpPr
 	private short spLocks_noGrp;
 	// nvPr
-	private PhType nvPr_ph; // Placeholder Shape
+	private PhType nvPr_ph_type; // Placeholder Shape
+	private int nvPr_ph_idx;// Placeholder Index
+
+	public int getNvPrPhIdx() {
+		return nvPr_ph_idx;
+	}
+
+	public void setNvPrPhIdx(int nvPr_ph_idx) {
+		this.nvPr_ph_idx = nvPr_ph_idx;
+	}
 
 	public String getcNvPr_name() {
 		return cNvPr_name;
@@ -30,20 +39,20 @@ public class NvSpPr {// Non-Visual Properties for a Shape
 		this.cNvPr_name = cNvPr_name;
 	}
 
-	public int getcNvPr_id() {
+	public int getcNvPrId() {
 		return cNvPr_id;
 	}
 
-	public void setcNvPr_id(int cNvPr_id) {
+	public void setcNvPrId(int cNvPr_id) {
 		this.cNvPr_id = cNvPr_id;
 	}
 
-	public PhType getNvPr_ph() {
-		return nvPr_ph;
+	public PhType getNvPrPhType() {
+		return nvPr_ph_type;
 	}
 
-	public void setNvPr_ph(PhType nvPr_ph) {
-		this.nvPr_ph = nvPr_ph;
+	public void setNvPrPhType(PhType nvPr_ph_type) {
+		this.nvPr_ph_type = nvPr_ph_type;
 	}
 
 }

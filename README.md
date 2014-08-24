@@ -1,4 +1,4 @@
 openoffice
 ==========
 description:
-Internship practice project project,  parse xlsx and pptx document
+Internship practice project,  parse xlsx and pptx document

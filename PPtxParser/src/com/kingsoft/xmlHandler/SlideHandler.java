@@ -3,8 +3,6 @@ package com.kingsoft.xmlHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -15,6 +13,9 @@ import com.kingsoft.entities.Picture;
 import com.kingsoft.entities.Shape;
 import com.kingsoft.entities.Slide;
 import com.kingsoft.entities.SpTree;
+import com.kingsoft.entities.TxBody;
+import com.kingsoft.paraContent.ParaChildElement;
+import com.kingsoft.paraContent.ParaElement;
 
 public class SlideHandler extends DefaultHandler {
 
@@ -22,11 +23,16 @@ public class SlideHandler extends DefaultHandler {
 	SpTree spTree;
 	List<Shape> spList;
 	List<Picture> picList;
+	List<ParaElement> paElements;
+	List<ParaChildElement> textParas;
 
 	// share var
 	String strVal;
 	Shape shape;
 	NvSpPr nvSpPr;
+	TxBody txBody;
+	ParaElement paElement;
+	
 
 	// Tag
 	private final String P_sp = "p:sp";
@@ -34,7 +40,8 @@ public class SlideHandler extends DefaultHandler {
 	private final String P_cNvPr = "p:cNvPr";
 	private final String A_spLocks = "a:spLocks";
 	private final String P_ph = "p:ph";
-
+	private final String P_txBody = "p:txBody";
+	private final String A_p = "a:p";
 	private final String P_Pic = "p:pic";
 
 	// Qname
@@ -42,8 +49,9 @@ public class SlideHandler extends DefaultHandler {
 	private final String ID = "id";
 	private final String NOGRP = "noGrp";
 	private final String TYPE = "type";
-	
-	//phType
+	private final String IDX = "idx";
+
+	// phType
 	private final String BODY = "body";
 	private final String CHART = "chart";
 	private final String CLIPART = "clipArt";
@@ -55,12 +63,11 @@ public class SlideHandler extends DefaultHandler {
 	private final String MEDIA = "media";
 	private final String OBJ = "obj";
 	private final String PIC = "pic";
-	private final String SLDIMG ="sldImg";
+	private final String SLDIMG = "sldImg";
 	private final String SLDNUM = "sldNum";
 	private final String SUBTITLE = "subTitle";
 	private final String TBL = "tbl";
 	private final String TITLE = "title";
-	
 
 	public SlideHandler(Slide slide) {
 		this.slide = slide;
@@ -94,16 +101,29 @@ public class SlideHandler extends DefaultHandler {
 				nvSpPr.setcNvPr_name(strVal);
 			}
 			if ((strVal = attributes.getValue(ID)) != null) {
-				nvSpPr.setcNvPr_id(Integer.parseInt(strVal));
+				nvSpPr.setcNvPrId(Integer.parseInt(strVal));
 			}
-		}else if(qName.equals(A_spLocks)){
+		} else if (qName.equals(A_spLocks)) {
 			if ((strVal = attributes.getValue(NOGRP)) != null) {
 				nvSpPr.setSpLocks_noGrp(Short.parseShort(strVal));
 			}
-		}else if(qName.equals(P_ph)){
-			if ((strVal = attributes.getValue(TYPE)) != null){
-				nvSpPr.setNvPr_ph(getPhType(strVal));
+		} else if (qName.equals(P_ph)) {
+			if ((strVal = attributes.getValue(TYPE)) != null) {
+				nvSpPr.setNvPrPhType(getPhType(strVal));
 			}
+			if ((strVal = attributes.getValue(IDX)) != null) {
+				nvSpPr.setNvPrPhIdx(Integer.parseInt(strVal));
+			}
+		}else if (qName.equals(P_txBody)) {
+			txBody = new TxBody();
+			shape.setTxBody(txBody);
+			paElements = new ArrayList<ParaElement>();
+			txBody.setTextParas(paElements);
+		} else if (qName.equals(A_p)) {
+			paElement = new ParaElement();
+			paElements.add(paElement);
+			textParas = new ArrayList<ParaChildElement>();
+			paElement.setParaChildElements(textParas);
 		}
 	}
 
@@ -116,41 +136,41 @@ public class SlideHandler extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 	}
-	
-	private PhType getPhType(String phType){
+
+	private PhType getPhType(String phType) {
 		if (phType.equals(BODY)) {
 			return PhType.body;
-		}else if (phType.equals(CHART)) {
+		} else if (phType.equals(CHART)) {
 			return PhType.chart;
-		}else if (phType.equals(CLIPART)) {
+		} else if (phType.equals(CLIPART)) {
 			return PhType.clipArt;
-		}else if (phType.equals(CTRTITLE)) {
+		} else if (phType.equals(CTRTITLE)) {
 			return PhType.ctrTitle;
-		}else if (phType.equals(DGM)) {
+		} else if (phType.equals(DGM)) {
 			return PhType.dgm;
-		}else if (phType.equals(DT)) {
+		} else if (phType.equals(DT)) {
 			return PhType.dt;
-		}else if (phType.equals(FTR)) {
+		} else if (phType.equals(FTR)) {
 			return PhType.ftr;
-		}else if (phType.equals(HDR)) {
+		} else if (phType.equals(HDR)) {
 			return PhType.hdr;
-		}else if (phType.equals(MEDIA)) {
+		} else if (phType.equals(MEDIA)) {
 			return PhType.media;
-		}else if (phType.equals(OBJ)) {
+		} else if (phType.equals(OBJ)) {
 			return PhType.obj;
-		}else if (phType.equals(PIC)) {
+		} else if (phType.equals(PIC)) {
 			return PhType.pic;
-		}else if (phType.equals(SLDIMG)) {
+		} else if (phType.equals(SLDIMG)) {
 			return PhType.sldImg;
-		}else if (phType.equals(SLDNUM)) {
+		} else if (phType.equals(SLDNUM)) {
 			return PhType.sldNum;
-		}else if (phType.equals(SUBTITLE)) {
+		} else if (phType.equals(SUBTITLE)) {
 			return PhType.subTitle;
-		}else if (phType.equals(TBL)) {
+		} else if (phType.equals(TBL)) {
 			return PhType.tbl;
-		}else if (phType.equals(TITLE)) {
+		} else if (phType.equals(TITLE)) {
 			return PhType.title;
-		}else {
+		} else {
 			return null;
 		}
 	}
